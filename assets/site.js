@@ -60,8 +60,16 @@
         var t = (f.querySelector('input[name="form_type"]') || {}).value;
         st.className = 'status ok'; st.textContent = THANKS[t] || 'Thank you. We will be in touch shortly.'; f.reset();
       }).catch(function () {
-        st.className = 'status err';
-        st.innerHTML = 'Sorry, that did not go through. Please message us on <a href="' + WA + '">WhatsApp</a> instead.';
+        var t = (f.querySelector('input[name="form_type"]') || {}).value || 'Enquiry';
+        var lines = [t + ' (from annapaatram.com)'];
+        data.forEach(function (v, k) {
+          if (k === 'site' || k === 'website' || k === 'form_type' || k.indexOf('resume_') === 0 || !String(v).trim()) return;
+          lines.push(k.replace(/_/g, ' ').replace(/^./, function (c) { return c.toUpperCase(); }) + ': ' + v);
+        });
+        var href = WA + '?text=' + encodeURIComponent(lines.join('\n'));
+        st.className = 'status ok';
+        st.innerHTML = 'One more tap: <a href="' + href + '" target="_blank" rel="noopener">send this to us on WhatsApp</a> and we will call you back.';
+        window.open(href, '_blank', 'noopener');
       }).finally(function () { btn.disabled = false; });
     });
   });
